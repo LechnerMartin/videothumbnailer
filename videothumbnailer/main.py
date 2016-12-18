@@ -1,5 +1,6 @@
-import os.path
+import os
 import sys
+sys.path.append(os.path.join(os.path.dirname(__file__),'..'))
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
@@ -40,11 +41,23 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.sliderVideoPosition.valueChanged.connect(self.videosliderposition_changed)
         self.sliderVideoPosition.sliderReleased.connect(self.videosliderposition_final_reached)
 
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.statusChanged)
 
-        # for testing
-        filename = "/home/mlechner/private/iai/2013-09-23_RXX_Iai_Koho_Seigan_Nuki_Kacem_02.AVI"
+        #self.ocvcap = cv2.VideoCapture(filename)
+        #time.sleep (50.0 / 1000.0);
+
+        #def addInputTextToListbox(self):
+          #  txt = self.myTextInput.text()
+      #  self.listWidget.addItem(txt)
+
+    def load_file(self, filename=None):
         if filename is None:
-            filename = QtGui.QFileDialog.getOpenFileName(self, "Open File", os.path.expanduser('~'))
+#            options = QtWidgets.QFileDialog.Options()
+ #           options |= QtWidgets.QFileDialog.DontUseNativeDialog
+  #          fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Video Files (*.avi)", options=options)
+   #         filename = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", os.path.expanduser('~'))
+            return
         if not filename:
             return
 
@@ -53,17 +66,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
         self.statusChanged()
         self.refresh_marks()
-
-        self.timer.setInterval(100)
-        self.timer.timeout.connect(self.statusChanged)
         self.timer.start()
-
-        #self.ocvcap = cv2.VideoCapture(filename)
-        #time.sleep (50.0 / 1000.0);
-
-        #def addInputTextToListbox(self):
-          #  txt = self.myTextInput.text()
-      #  self.listWidget.addItem(txt)
 
     def toggle_play_pause(self):
         self.logic.toggle_play_pause()
@@ -170,12 +173,18 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
 
 
-
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='videothumbnailer')
+    parser.add_argument("-i", "--inputfile")
+    args = parser.parse_args()
+
     app = QtWidgets.QApplication(sys.argv)
     main_window = QtWidgets.QMainWindow()
 
     prog = VideoThumbnailerGui(main_window)
+    prog.load_file(args.inputfile)
+    #prog.load_file("/home/mlechner/private/iai/2013-09-24_RXX_Iai_Koho_Seigan_Nuki_Kacem_01.mp4")
 
     main_window.show()
     sys.exit(app.exec_())
