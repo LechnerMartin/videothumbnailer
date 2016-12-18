@@ -128,12 +128,14 @@ class Ui_MainWindow(object):
         self.actionOpen = QtWidgets.QAction(MainWindow)
         self.actionOpen.setEnabled(True)
         self.actionOpen.setObjectName("actionOpen")
+        self.actionFileOpen = QtWidgets.QAction(MainWindow)
+        self.actionFileOpen.setObjectName("actionFileOpen")
+        self.menuFile.addAction(self.actionFileOpen)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.toolBar.addAction(self.actionOpen)
 
         self.retranslateUi(MainWindow)
-        self.actionOpen.triggered.connect(MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -151,16 +153,21 @@ class Ui_MainWindow(object):
         self.treeWidget.setSortingEnabled(__sortingEnabled)
         self.pushButtonStop.setText(_translate("MainWindow", "Stop"))
         self.pushButtonPlayPause.setText(_translate("MainWindow", "Play"))
+        self.pushButtonPlayPause.setShortcut(_translate("MainWindow", "Space", " "))
         self.pushButtonStep.setText(_translate("MainWindow", "Step"))
+        self.pushButtonStep.setShortcut(_translate("MainWindow", "."))
         self.pushButtonMark.setText(_translate("MainWindow", "Mark"))
+        self.pushButtonMark.setShortcut(_translate("MainWindow", "M"))
         self.videoName.setText(_translate("MainWindow", "Video name"))
         self.pushButtonTest.setText(_translate("MainWindow", "Test mis"))
         self.label.setText(_translate("MainWindow", "Marked frames:"))
         self.labelDebugInfo.setText(_translate("MainWindow", "Debug info"))
         self.pushButtonSave.setText(_translate("MainWindow", "Save"))
+        self.pushButtonSave.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.label_2.setText(_translate("MainWindow", "Preview:"))
         self.labelImageGeometry.setText(_translate("MainWindow", "TextLabel"))
         self.pushButtonDeleteMark.setText(_translate("MainWindow", "Delete"))
+        self.pushButtonDeleteMark.setShortcut(_translate("MainWindow", "Del"))
         self.pushButtonClearMarks.setText(_translate("MainWindow", "Clear all"))
         self.currentTime.setText(_translate("MainWindow", "currentTime"))
         self.currentTimeMs.setText(_translate("MainWindow", "currentMs"))
@@ -169,6 +176,7 @@ class Ui_MainWindow(object):
         self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
+        self.actionFileOpen.setText(_translate("MainWindow", "Open"))
 
 
 if __name__ == "__main__":

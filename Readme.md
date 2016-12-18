@@ -7,19 +7,29 @@
 * x Slider for image
 * x Export Image File (check overwrite?)
 * x Export/reload marks with image
+* x Chek into github
+* x make starter + parse command line
+
+
+* more tests before refactorig
+  * Gui tests
+  * E2E test (open, play, mark, save, load?)
+    * with Mock or real HD?
+* E2E tests, GUI tests, Functional tests
+* Refactor
+  * Extract modules: datamodel, io, gui, datatypes?
+
+* Save description text
+* Add chapters (save + reload)
+
+* starter: without param take arguent as file
+* Expand to audio only files?
+
 
 * Scale preview correctly
-* more tests before refactorig?
-* Refactor
-* E2E tests, GUI tests, Functional tests
-
-* Add chapters (save + reload)
-* Save description text
+* Fix strange offset of marks when setting time
 
 * Slider for audio (Workarund -> OS Gui)
-
-* make starter + parse command line
-* Chek into github
 
 ## Basic Fuctionality
 * Open file

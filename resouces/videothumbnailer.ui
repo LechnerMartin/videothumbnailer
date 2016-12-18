@@ -111,6 +111,9 @@
        <property name="text">
         <string>Play</string>
        </property>
+       <property name="shortcut">
+        <string comment=" ">Space</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -118,12 +121,18 @@
        <property name="text">
         <string>Step</string>
        </property>
+       <property name="shortcut">
+        <string>.</string>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pushButtonMark">
        <property name="text">
         <string>Mark</string>
+       </property>
+       <property name="shortcut">
+        <string>M</string>
        </property>
       </widget>
      </item>
@@ -203,6 +212,9 @@
     <property name="text">
      <string>Save</string>
     </property>
+    <property name="shortcut">
+     <string>Ctrl+S</string>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
@@ -270,6 +282,9 @@
       <widget class="QPushButton" name="pushButtonDeleteMark">
        <property name="text">
         <string>Delete</string>
+       </property>
+       <property name="shortcut">
+        <string>Del</string>
        </property>
       </widget>
      </item>
@@ -355,6 +370,7 @@
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionFileOpen"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -385,24 +401,12 @@
     <string>Open</string>
    </property>
   </action>
+  <action name="actionFileOpen">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>actionOpen</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>319</x>
-     <y>239</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

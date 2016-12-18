@@ -41,6 +41,9 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.sliderVideoPosition.valueChanged.connect(self.videosliderposition_changed)
         self.sliderVideoPosition.sliderReleased.connect(self.videosliderposition_final_reached)
 
+        self.actionFileOpen.triggered.connect(self.load_file_action)
+        self.actionOpen.triggered.connect(self.load_file_action)
+
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.statusChanged)
 
@@ -51,13 +54,24 @@ class VideoThumbnailerGui(Ui_MainWindow):
           #  txt = self.myTextInput.text()
       #  self.listWidget.addItem(txt)
 
+
+    def load_file_action(self):
+        self.load_file()
+
     def load_file(self, filename=None):
         if filename is None:
-#            options = QtWidgets.QFileDialog.Options()
- #           options |= QtWidgets.QFileDialog.DontUseNativeDialog
-  #          fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Video Files (*.avi)", options=options)
-   #         filename = QtWidgets.QFileDialog.getOpenFileName(self, "Open File", os.path.expanduser('~'))
-            return
+            dlg = QtWidgets.QFileDialog()
+            dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
+            #dlg.setFilter("Audio files (*.mp3,*.wav,*.ogg,*.mp4)")
+            #dlg.setFilter("Video files (*.mp4,*.avi,*.mpg,*.flv)")
+
+            filenames = []
+            if dlg.exec_():
+                filenames = dlg.selectedFiles()
+
+            if len(filenames) > 0:
+                filename = filenames[0]
+
         if not filename:
             return
 
