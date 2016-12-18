@@ -7,8 +7,8 @@
 * x Slider for image
 * x Export Image File (check overwrite?)
 * x Export/reload marks with image
-* x Scale preview correctly
 
+* Scale preview correctly
 * more tests before refactorig?
 * Refactor
 * E2E tests, GUI tests, Functional tests
