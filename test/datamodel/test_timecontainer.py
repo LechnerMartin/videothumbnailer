@@ -1,7 +1,8 @@
 import unittest
 
 from assertpy import assert_that
-from videothumbnailer.player.player import TimeContainer
+from videothumbnailer.datamodel.datatypes import TimeContainer
+
 
 class TimeContainerTest(unittest.TestCase):
     """

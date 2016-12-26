@@ -3,109 +3,10 @@ from unittest.mock import Mock
 
 from assertpy import assert_that
 
-from videothumbnailer.logic.logic import ThumbnailerLogic, DataModel, Xy, FileIo
+from videothumbnailer.datamodel.datatypes import Chapter, TimeContainer
+from videothumbnailer.io.fileio import FileIo
+from videothumbnailer.logic.logic import ThumbnailerLogic
 from videothumbnailer.player.player import MediaPlayer, TimeContainer
-
-
-class XyTest(unittest.TestCase):
-    def test_equality(self):
-        assert_that(Xy(1,2)).is_equal_to(Xy(1,2))
-
-    def test_inequlity(self):
-        assert_that(Xy(1,2)).is_not_equal_to(Xy(2,1))
-
-
-class DataModelTest(unittest.TestCase):
-    def setUp(self):
-        self.model = DataModel()
-        self.model.add_mark(TimeContainer(4567), None)
-
-    def test_inital_empty(self):
-        assert_that(DataModel().size()).is_equal_to(0)
-
-    def test_set_media_url(self):
-        mediaurl = "/root/someuser/test.avi"
-        self.model.set_media_url(mediaurl)
-
-        assert_that(self.model.full_media_url).is_equal_to(mediaurl)
-
-    def test_add_marks(self):
-        assert_that(self.model.size()).is_equal_to(1)
-        assert_that(self.model.get_by_idx(0).milliseconds).is_equal_to(4567)
-        assert_that(self.model.get_images()).is_equal_to([None])
-
-    def test_add_adds_images(self):
-        image = "a"
-        self.model.add_mark(TimeContainer(5767), image)
-
-        assert_that(self.model.get_images()).is_equal_to([None,"a"])
-
-    def test_images_are_sorted(self):
-        blank_image = "b"
-        filled_image = "f"
-        self.model.add_mark(TimeContainer(1234), filled_image)
-        self.model.add_mark(TimeContainer(5678), blank_image)
-        assert_that(self.model.get_images()).is_equal_to(["f", None, "b"])
-
-    def test_add_marks_twice_is_ignored(self):
-        self.model.add_mark(TimeContainer(4567), None)
-        assert_that(self.model.size()).is_equal_to(1)
-
-    def test_add_marks_twice_is_not_ignored_if_image_was_not_there(self):
-        self.model.add_mark(TimeContainer(4567), "a")
-        assert_that(self.model.size()).is_equal_to(1)
-        assert_that(self.model.get_images()).is_equal_to(["a"])
-
-
-    def test_delete_mark(self):
-        self.model.delete(TimeContainer(4567))
-        assert_that(self.model.size()).is_equal_to(0)
-
-    def test_delete_mark_not_workink_if_wrong_id(self):
-        self.model.delete(TimeContainer(4568))
-        assert_that(self.model.size()).is_equal_to(1)
-
-    def test_iterator(self):
-        result =[]
-        for mark in self.model:
-            result.append(mark)
-        assert_that(result).is_equal_to([TimeContainer(4567)])
-
-    def test_marks_are_sorted(self):
-        self.model.add_mark(TimeContainer(1567), None)
-        assert_that(self.model.get_by_idx(0)).is_equal_to(TimeContainer(1567))
-
-    def test_clear_marks(self):
-        self.model.clear()
-        assert_that(self.model.size()).is_equal_to(0)
-        assert_that(self.model.get_images()).is_equal_to([])
-
-    def test_autocalculate_frames_per_row_and_column_from_empty_marks(self):
-        marks = DataModel()
-        assert_that(marks.size()).is_equal_to(0)
-        assert_that(marks.get_xy_size()).is_equal_to(Xy(0, 0))
-
-    def test_autocalculate_frames_per_row_and_column_from_marks(self):
-        marks = self.get_filled_marks(10)
-        assert_that(marks.size()).is_equal_to(10)
-        assert_that(marks.get_xy_size()).is_equal_to(Xy(4, 3))
-
-    def test_calculate_frames_per_row_and_column_with_x_speicfied(self):
-        marks = self.get_filled_marks(9)
-        assert_that(marks.size()).is_equal_to(9)
-        assert_that(marks.get_xy_size(5)).is_equal_to(Xy(5, 2))
-        assert_that(marks.get_xy_size(1)).is_equal_to(Xy(1, 9))
-
-
-    def get_filled_marks(self, count):
-        marks = DataModel()
-        for i in range(count):
-            marks.add_mark(TimeContainer(i), None)
-        return marks
-
-
-
-
 
 
 class LogicTest(unittest.TestCase):
@@ -134,6 +35,14 @@ class LogicTest(unittest.TestCase):
         assert_that(model.get_images()).is_equal_to(["screenshot"])
         assert_that(self.mock_player.get_screenshot.assert_called_once_with(TimeContainer(455)))
 
+
+    def test_add_chapter(self):
+        self.mock_player.get_current_time = Mock(return_value=TimeContainer(12233))
+
+        self.logic.add_chapter(Chapter(None, "title1", "description1"))
+
+        model = self.logic.get_model()
+        assert_that(model.get_chapter(TimeContainer(12233))).is_equal_to(Chapter(TimeContainer(12233), "title1", "description1"))
 
     def test_delete_mark(self):
         self.mock_player.get_current_time = Mock(return_value=TimeContainer(455))

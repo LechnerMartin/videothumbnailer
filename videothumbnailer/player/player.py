@@ -1,28 +1,10 @@
 import sys
-import vlc
-import datetime
+
 import cv2
+import vlc
 
+from videothumbnailer.datamodel.datatypes import TimeContainer
 
-class TimeContainer:
-
-    def __init__(self, milliseconds):
-        if milliseconds < 0:
-            milliseconds = 0
-        self.milliseconds = milliseconds
-        self.__datetime = datetime.datetime.utcfromtimestamp(milliseconds/1000.0)
-
-    def strftime(self, formatstring):
-        return self.__datetime.strftime(formatstring)
-
-    def __str__(self):
-        return self.__datetime.strftime("%H:%M:%S")
-
-    def __eq__(self, other):
-        return self.milliseconds == other.milliseconds
-
-    def __hash__(self):
-        return hash(self.milliseconds)
 
 class MediaPlayer:
     def __init__(self):
