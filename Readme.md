@@ -19,8 +19,8 @@
 * Refactor
   * Extract modules: datamodel, io, gui, datatypes?
 
-* Save description text
 * Add chapters (save + reload)
+* Save description text
 
 * starter: without param take arguent as file
 * Expand to audio only files?
@@ -45,6 +45,7 @@
 
 ## Advanced
 ### Technical
+* reference file per hash 
 * Extract Modules
   * Player
   * Data model

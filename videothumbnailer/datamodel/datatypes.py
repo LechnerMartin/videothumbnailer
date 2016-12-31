@@ -2,7 +2,7 @@ import datetime
 
 
 class Chapter:
-    def __init__(self, timestamp, title, description):
+    def __init__(self, timestamp, title = "Chapter", description = ""):
         self.timestamp = timestamp
         self.title = title
         self.description = description
@@ -17,6 +17,13 @@ class Chapter:
 
     def __str__(self):
         return self.__repr__()
+
+    def __lt__(self, other):
+        return self.timestamp < other.timestamp
+
+    def __le__(self, other):
+        return self.timestamp <= other.timestamp
+
 
     def __repr__(self):
         return str(self.__dict__)
@@ -45,7 +52,10 @@ class TimeContainer:
         if milliseconds < 0:
             milliseconds = 0
         self.milliseconds = milliseconds
-        self.__datetime = datetime.datetime.utcfromtimestamp(milliseconds/1000.0)
+        try:
+            self.__datetime = datetime.datetime.utcfromtimestamp(milliseconds/1000.0)
+        except ValueError as ex:
+            raise ValueError(str(ex) + " " + str(milliseconds))
 
     def strftime(self, formatstring):
         return self.__datetime.strftime(formatstring)
@@ -58,6 +68,13 @@ class TimeContainer:
 
     def __eq__(self, other):
         return self.milliseconds == other.milliseconds
+
+    def __lt__(self, other):
+        return self.milliseconds < other.milliseconds
+
+    def __le__(self, other):
+        return self.milliseconds <= other.milliseconds
+
 
     def __hash__(self):
         return hash(self.milliseconds)

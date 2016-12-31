@@ -27,14 +27,20 @@
      <string>nrOfMarkedFrames</string>
     </property>
    </widget>
-   <widget class="QTreeWidget" name="treeWidget">
+   <widget class="QTreeWidget" name="marksTreeWidget">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>711</y>
-      <width>256</width>
-      <height>131</height>
+      <x>240</x>
+      <y>580</y>
+      <width>411</width>
+      <height>241</height>
      </rect>
+    </property>
+    <property name="itemsExpandable">
+     <bool>true</bool>
+    </property>
+    <property name="expandsOnDoubleClick">
+     <bool>true</bool>
     </property>
     <column>
      <property name="text">
@@ -169,7 +175,7 @@
      <rect>
       <x>10</x>
       <y>580</y>
-      <width>541</width>
+      <width>221</width>
       <height>241</height>
      </rect>
     </property>

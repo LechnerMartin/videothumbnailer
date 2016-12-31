@@ -6,14 +6,22 @@ from videothumbnailer.io.fileio import FileIo
 from videothumbnailer.datamodel.datatypes import TimeContainer
 
 
+class Callback:
+    def callback_marks_changed(self):
+        pass
+
+    def callback_chapters_changed(self):
+        pass
+
 class ThumbnailerLogic:
 
-    def __init__(self, player):
+    def __init__(self, player, callback=Callback()):
         self.player = player
         self.datamodel = DataModel()
         self.is_playing = False
         self.is_paused = True
         self.fileio = FileIo()
+        self.callback = callback
 
     def load_media(self, mediaurl):
         self.datamodel.set_media_url(mediaurl)
@@ -29,6 +37,7 @@ class ThumbnailerLogic:
             marks = metadata["Marks"]
             for mark in marks:
                 self.__mark_position_at_time(TimeContainer(mark))
+        self.callback.callback_marks_changed()
 
 
     def toggle_play_pause(self):
@@ -58,16 +67,26 @@ class ThumbnailerLogic:
     def get_current_time(self):
         return self.player.get_current_time()
 
+    def get_current_chapter(self, timecontainer):
+        return self.datamodel.get_previous_chapter(timecontainer)
+
     def set_current_time(self, timecontainer):
         self.player.set_current_time(timecontainer)
 
     def mark_position(self):
         time = self.player.get_current_time()
         self.__mark_position_at_time(time)
+        self.callback.callback_marks_changed()
 
     def __mark_position_at_time(self, time):
         image = self.player.get_screenshot(time)
         self.datamodel.add_mark(time, image)
+
+    def get_marks(self):
+        return self.datamodel.get_marks()
+
+    def get_marks_for_chapter(self, chapter):
+        return self.datamodel.get_marks_for_chapter(chapter)
 
     def get_model(self):
         return self.datamodel
@@ -95,6 +114,10 @@ class ThumbnailerLogic:
         time = self.player.get_current_time()
         chapter.timestamp = time
         self.datamodel.add_chapter(chapter)
+        self.callback.callback_chapters_changed()
+
+    def get_chapters(self):
+        return self.datamodel.get_chapters()
 
 
     def get_preview_image(self):

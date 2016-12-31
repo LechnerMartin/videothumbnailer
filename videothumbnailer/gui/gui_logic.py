@@ -11,8 +11,9 @@ class VideoThumbnailerGui(Ui_MainWindow):
         super(VideoThumbnailerGui, self).__init__()
         #Ui_MainWindow.__init__(self)
         self.setupUi(window)
-        self.timer = QtCore.QTimer()
         self.logic = logic
+
+        self.timer = QtCore.QTimer()
 
         # make connections
         self.pushButtonTest.clicked.connect(self.statusChanged)
@@ -33,6 +34,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.marksListWidget.currentItemChanged.connect(self.listClicked)
 #       self.connect(self.listWidget, QtCore.SIGNAL("currentItemChanged (QListWidgetItem*,QListWidgetItem*)"), self.listClicked)
 
+        self.marksTreeWidget.currentItemChanged.connect(self.treeClicked)
+
         self.sliderVideoPosition.sliderPressed.connect(self.timer.stop)
         self.sliderVideoPosition.valueChanged.connect(self.videosliderposition_changed)
         self.sliderVideoPosition.sliderReleased.connect(self.videosliderposition_final_reached)
@@ -49,6 +52,46 @@ class VideoThumbnailerGui(Ui_MainWindow):
         #def addInputTextToListbox(self):
           #  txt = self.myTextInput.text()
       #  self.listWidget.addItem(txt)
+
+    def callback_marks_changed(self):
+
+        self.marksTreeWidget.clear()
+        chapters = self.logic.get_chapters()
+
+        for chap in chapters :
+            if chap is None :
+                chap = Chapter(TimeContainer(0),"Default", "")
+            chap_qti = QtWidgets.QTreeWidgetItem()
+            chap_qti.setText(0,str(chap.timestamp))
+            chap_qti.setText(1,chap.title)
+            chap_qti.setData(0, QtCore.Qt.UserRole, QtCore.QVariant(chap.timestamp))
+            chap_qti.setData(1, QtCore.Qt.UserRole, QtCore.QVariant(chap))
+            self.marksTreeWidget.addTopLevelItem(chap_qti)
+            chap_qti.setExpanded(True);
+
+            marks = self.logic.get_marks_for_chapter(chap)
+            for mark in marks:
+                mark_qti = QtWidgets.QTreeWidgetItem(chap_qti)
+                mark_qti.setText(0, str(mark))
+                mark_qti.setData(0, QtCore.Qt.UserRole, QtCore.QVariant(mark))
+
+        current_tree_chapter = None
+        current_time = self.logic.get_current_time()
+        current_chapter = self.logic.get_current_chapter(current_time)
+        it = QtWidgets.QTreeWidgetItemIterator(self.marksTreeWidget);
+        while it.value():
+            treechapter  = it.value()
+            if current_chapter == treechapter.data(1, QtCore.Qt.UserRole):
+                current_tree_chapter = treechapter
+            it += 1
+        self.marksTreeWidget.scrollToItem(current_tree_chapter, QtWidgets.QAbstractItemView.PositionAtTop)
+        treechapter.setExpanded(True)
+
+            #chap_qti.setExpanded(True);
+
+
+    def callback_chapters_changed(self):
+        self.callback_marks_changed()
 
 
     def get_videoframehandle(self):
@@ -115,6 +158,12 @@ class VideoThumbnailerGui(Ui_MainWindow):
         data = newitem.data(QtCore.Qt.UserRole)
         self.logic.jump_to(data)
 
+    def treeClicked(self, newitem, previtem):
+        if newitem == None:
+            return
+        data = newitem.data(0, QtCore.Qt.UserRole)
+        self.logic.jump_to(data)
+
     def mark(self):
         self.logic.mark_position()
         self.refresh_marks()
@@ -136,7 +185,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         model = self.logic.get_model()
         cvImg = self.logic.get_preview_image()
 
-        self.refresh_listview(model)
+        self.refresh_listview()
         self.refresh_preview(cvImg, model)
 
     def refresh_preview(self, cvImg, model):
@@ -152,17 +201,17 @@ class VideoThumbnailerGui(Ui_MainWindow):
         pixmap = pixmap.scaled(preview_area.width(), preview_area.height())
         return pixmap
 
-    def refresh_listview(self, model):
+    def refresh_listview(self):
         self.marksListWidget.clear()
-        for mark in model:
+        marks = self.logic.get_marks()
+        for mark in marks:
             text = "{} ({})".format(str(mark), mark.milliseconds)
             item = QtWidgets.QListWidgetItem(text, self.marksListWidget)
             item.setData(QtCore.Qt.UserRole, QtCore.QVariant(mark))
-        self.nrOfMarkedFrames.setText(str(model.size()))
+        self.nrOfMarkedFrames.setText(str(len(marks)))
 
     def refresh_chapterview(self):
-        model = self.logic.get_model()
-        chapters = model.get_chapters()
+        chapters = self.logic.get_chapters()
         for chapter in chapters:
             text = "{} {}".format(str(chapter.timestamp), chapter.title)
             item = QtWidgets.QListWidgetItem(text, self.listChapters)
@@ -198,6 +247,9 @@ class VideoThumbnailerGui(Ui_MainWindow):
             self.pushButtonPlayPause.setText("Pause")
         if not self.logic.is_playing:
             self.pushButtonPlayPause.setText("Play")
+
+
+
 
     def display_current_videotime(self, timecontainer):
         self.currentTimeMs.setText(str(timecontainer.milliseconds))

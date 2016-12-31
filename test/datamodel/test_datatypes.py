@@ -14,6 +14,10 @@ class ChapterTest(unittest.TestCase):
         assert_that(Chapter(123,"a", "b")).is_not_equal_to(Chapter(123,"x", "b"))
        # assert_that(Chapter(123,"a", "b")).is_not_equal_to(Chapter(123,"a", "x"))
 
+    def test_comparison(self):
+        assert_that(Chapter(2) > Chapter(1)).is_true()
+        assert_that(Chapter(5) < Chapter(6)).is_true()
+        assert_that(Chapter(7) >= Chapter(6)).is_true()
 
 class XyTest(unittest.TestCase):
     def test_equality(self):

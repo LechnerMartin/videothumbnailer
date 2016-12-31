@@ -20,6 +20,7 @@ def connect_app():
     main_window = QtWidgets.QMainWindow()
 
     prog = VideoThumbnailerGui(main_window, logic)
+    logic.callback = prog
     player.set_framehandle(prog.get_videoframehandle())
 
     prog.load_file(args.inputfile)

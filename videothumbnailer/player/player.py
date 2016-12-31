@@ -39,22 +39,24 @@ class MediaPlayer:
         return self.media.get_meta(idx)
 
     def get_duration(self):
-        duration = self.media.get_duration()
-        return TimeContainer(duration)
+        self.__duration = self.media.get_duration()
+        return TimeContainer(self.__duration)
 
     def get_current_time(self):
         time = self.player.get_time()
+        if time > self.__duration:
+            time = 0
         return TimeContainer(time)
 
     def set_current_time(self, timecontainer):
-        self.player.set_time(timecontainer.milliseconds - 10)
+        self.player.set_time(timecontainer.milliseconds)
 
     def load_media(self, mediaurl):
         self.media = self.instance.media_new(mediaurl)
         self.media.parse()
         self.player.set_media(self.media)
         self.ocvcap = cv2.VideoCapture(mediaurl)
-
+        self.__duration = self.media.get_duration()
 
     def get_screenshot(self, time):
         self.ocvcap.set(cv2.CAP_PROP_POS_MSEC,time.milliseconds)
