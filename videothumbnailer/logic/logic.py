@@ -3,8 +3,8 @@ import numpy as np
 
 from videothumbnailer.datamodel.datamodel import DataModel
 from videothumbnailer.io.fileio import FileIo
-from videothumbnailer.datamodel.datatypes import TimeContainer
-
+from videothumbnailer.datamodel.datatypes import TimeContainer, Chapter
+from videothumbnailer.logic.dataserializer import DataSerializer
 
 class Callback:
     def callback_marks_changed(self):
@@ -17,26 +17,26 @@ class ThumbnailerLogic:
 
     def __init__(self, player, callback=Callback()):
         self.player = player
+        self.callback = callback
         self.datamodel = DataModel()
+        self.serializer = DataSerializer()
+        self.fileio = FileIo()
         self.is_playing = False
         self.is_paused = True
-        self.fileio = FileIo()
-        self.callback = callback
+
 
     def load_media(self, mediaurl):
         self.datamodel.set_media_url(mediaurl)
         self.player.load_media(mediaurl)
 
         metadata = self.fileio.read_yaml(mediaurl)
+        if metadata is None:
+            return
 
-        if metadata is not None:
-            for key in ["Mediaurl", "Marks"] :
-                if key not in metadata.keys():
-                    return
-            self.datamodel.full_media_url = metadata["Mediaurl"]
-            marks = metadata["Marks"]
-            for mark in marks:
-                self.__mark_position_at_time(TimeContainer(mark))
+        model = self.serializer.deserialize(metadata)
+        for mark in model.get_marks():
+            self.__mark_position_at_time(mark)
+        self.datamodel = model
         self.callback.callback_marks_changed()
 
 
@@ -102,22 +102,21 @@ class ThumbnailerLogic:
 
     def export_data(self):
         url = self.datamodel.full_media_url
-
-        marks = [m.milliseconds for m in self.datamodel]
-        data = {"Mediaurl": url, "Marks": marks }
+        data = self.serializer.serialize(self.datamodel)
         self.fileio.write_yaml(url, data)
-       #marklist = [m.milliseconds for m in self.__marks]
-
-       #{"Mediaurl": self.full_media_url, "Marks": marklist}
 
     def add_chapter(self, chapter):
-        time = self.player.get_current_time()
-        chapter.timestamp = time
+        if chapter.timestamp is None:
+            time = self.player.get_current_time()
+            chapter.timestamp = time
         self.datamodel.add_chapter(chapter)
         self.callback.callback_chapters_changed()
 
     def get_chapters(self):
         return self.datamodel.get_chapters()
+
+    def delete_chapter(self, timestamp):
+        pass
 
 
     def get_preview_image(self):

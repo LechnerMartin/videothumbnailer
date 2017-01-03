@@ -72,6 +72,10 @@ class DataModel:
         clist.sort()
         return clist
 
+    def delete_chapter(self, timestamp):
+        if timestamp in self.__chapters.keys():
+            del self.__chapters[timestamp]
+
     def delete(self, timecontainer):
         if timecontainer in self.__marks:
             self.__marks.remove(timecontainer)

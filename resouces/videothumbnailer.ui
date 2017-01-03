@@ -365,7 +365,7 @@
    <widget class="QPushButton" name="buttonAddChapter">
     <property name="geometry">
      <rect>
-      <x>980</x>
+      <x>620</x>
       <y>510</y>
       <width>125</width>
       <height>34</height>
@@ -403,6 +403,45 @@
       <width>411</width>
       <height>91</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonUpdateChapter">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>510</y>
+      <width>91</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Update</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonDeleteChapter">
+    <property name="geometry">
+     <rect>
+      <x>990</x>
+      <y>510</y>
+      <width>101</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="buttonMoveChapter">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>510</y>
+      <width>101</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Move</string>
     </property>
    </widget>
   </widget>

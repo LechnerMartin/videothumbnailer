@@ -147,7 +147,23 @@ class DataModelTest(unittest.TestCase):
         self.model.add_chapter(c3)
         assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c2, c3, c1])
 
+    def test_add_chapter_updates_chapter_at_timestamp(self):
+        c = Chapter(TC(1024), "s", "t")
+        cup = Chapter(TC(1024), "k", "v")
+        self.model.add_chapter(c)
+        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c])
+        self.model.add_chapter(cup)
+        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,cup])
 
+    def test_delete_chapter_with_same_timestamp(self):
+        self.model.add_chapter(Chapter(TC(123),"", ""))
+        self.model.delete_chapter(TC(123))
+        assert_that(self.model.get_chapters()).is_length(1)
+
+    def test_delete_chapter_works_not_if_timestamp_is_different(self):
+        self.model.add_chapter(Chapter(TC(123),"", ""))
+        self.model.delete_chapter(TC(124))
+        assert_that(self.model.get_chapters()).is_length(2)
 
     def test_iterator(self):
         self.model.add_mark(TC(4567), None)

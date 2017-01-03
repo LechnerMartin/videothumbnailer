@@ -49,6 +49,8 @@ class MediaPlayer:
         return TimeContainer(time)
 
     def set_current_time(self, timecontainer):
+        if timecontainer is None:
+            return
         self.player.set_time(timecontainer.milliseconds)
 
     def load_media(self, mediaurl):

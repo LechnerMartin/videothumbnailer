@@ -4,8 +4,10 @@ from unittest.mock import Mock
 from assertpy import assert_that
 
 from videothumbnailer.datamodel.datatypes import Chapter, TimeContainer as TC
+from videothumbnailer.datamodel.datamodel import DataModel
 from videothumbnailer.io.fileio import FileIo
 from videothumbnailer.logic.logic import ThumbnailerLogic, Callback
+from videothumbnailer.logic.dataserializer import DataSerializer
 from videothumbnailer.player.player import MediaPlayer
 
 
@@ -18,10 +20,12 @@ class LogicTest(unittest.TestCase):
         self.mock_callback = Mock(spec = Callback )
         self.mock_player = Mock(spec = MediaPlayer )
         self.mock_fileio = Mock(spec = FileIo )
+        self.mock_dataserial = Mock(spec = DataSerializer )
         self.mock_fileio.read_yaml = Mock(return_value=None)
 
         self.logic = ThumbnailerLogic(self.mock_player, self.mock_callback)
         self.logic.fileio = self.mock_fileio
+        self.logic.serializer = self.mock_dataserial
 
     def test_initial_status(self):
         pass
@@ -42,12 +46,23 @@ class LogicTest(unittest.TestCase):
         self.logic.mark_position()
         assert_that(self.logic.get_marks()).is_equal_to([TC(144)])
 
-    def test_add_chapter(self):
+    def test_add_chapter_without_timestamp_gets_time_from_player(self):
         self.mock_player.get_current_time = Mock(return_value=TC(12233))
         self.logic.add_chapter(Chapter(None, "title1", "description1"))
         model = self.logic.get_model()
         assert_that(model.get_chapter(TC(12233))).is_equal_to(Chapter(TC(12233), "title1", "description1"))
         assert_that(self.mock_callback.callback_chapters_changed.assert_called_once_with())
+
+    def test_add_chapter_more_than_once_with_timestamp_is_updating(self):
+        self.logic.add_chapter(Chapter(TC(12), "title1", "description1"))
+        self.logic.add_chapter(Chapter(TC(12), "title1", "description1"))
+        self.logic.add_chapter(Chapter(TC(12), "title1", "description1"))
+        self.logic.add_chapter(Chapter(TC(12), "t", "d"))
+        model = self.logic.get_model()
+        assert_that(model.get_chapters()).is_length(2)
+        assert_that(model.get_chapter(TC(12))).is_equal_to(Chapter(TC(12), "t", "d"))
+        assert_that(self.mock_callback.callback_chapters_changed.assert_called_with())
+        assert_that(self.mock_player.get_current_time.assert_not_called())
 
     def test_get_chapters(self):
         self.mock_player.get_current_time = Mock(return_value=TC(12233))
@@ -69,6 +84,17 @@ class LogicTest(unittest.TestCase):
         chapter = self.logic.get_chapters()[1]
         marks = self.logic.get_marks_for_chapter(chapter)
         assert_that(marks).is_equal_to([TC(101)])
+
+
+    def test_delete_chapter(self):
+        self.logic.add_chapter(Chapter(TC(1234), "title1", "description1"))
+        self.logic.delete_chapter(TC(1234))
+
+        model = self.logic.get_model()
+        assert_that(model.get_chapters()).is_length(2)
+        assert_that(self.mock_callback.callback_chapters_changed.assert_called_once_with())
+        assert_that(self.mock_player.get_current_time.assert_not_called())
+
 
     def test_delete_mark(self):
         self.mock_player.get_current_time = Mock(return_value=TC(455))
@@ -102,35 +128,50 @@ class LogicTest(unittest.TestCase):
         assert_that(self.mock_player.set_current_time.assert_called_once_with(TC(500)))
 
 
-    def test_data_seraialisation_export(self):
+    def test_data_serialisation_export(self):
         mediaurl = "/r/a/test.avi"
         self.logic.load_media(mediaurl)
-        self.logic.datamodel.add_mark(TC(4567), None)
+        data_string = {"Connected": True}
+        self.mock_dataserial.serialize = Mock(return_value=data_string)
 
         self.logic.export_data()
 
-        self.mock_fileio.write_yaml.assert_called_once_with(mediaurl, {"Mediaurl": mediaurl, "Marks": [4567]})
+        self.mock_dataserial.serialize.assert_called_once_with(self.logic.datamodel)
+        self.mock_fileio.write_yaml.assert_called_once_with(mediaurl, data_string)
+
 
     def test_load_media(self):
         mediaurl = "/root/someuser/test.avi"
         self.logic.load_media(mediaurl)
         assert_that(self.logic.get_model().full_media_url).is_equal_to(mediaurl)
 
+
     def test_load_meda_including_data_serialisation_import_throw_no_error(self):
         self.mock_fileio.read_yaml = Mock(return_value={})
+        self.mock_dataserial.deserialize = Mock(return_value=DataModel())
         self.logic.load_media("k")
         #assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
 
     def test_load_meda_including_data_serialisation_import(self):
         mediaurl = "/r/test.avi"
-        self.mock_fileio.read_yaml = Mock(return_value={"Mediaurl": mediaurl, "Marks": [4711]})
+        model = DataModel()
+        model.add_mark(TC(4567), None)
+        model.add_chapter(Chapter(TC(0), "Default", ""))
+        model.add_chapter(Chapter(TC(1567), "t1", "d1"))
+        self.mock_dataserial.deserialize = Mock(return_value=model)
+        self.mock_fileio.read_yaml = Mock(return_value="{file input}")
 
         self.logic.load_media(mediaurl)
 
         self.mock_fileio.read_yaml.assert_called_once_with(mediaurl)
-        self.mock_player.get_screenshot.assert_called_once_with(TC(4711))
+        self.mock_dataserial.deserialize.assert_called_once_with("{file input}")
+        self.mock_player.get_screenshot.assert_called_once_with(TC(4567))
+        assert_that(self.logic.datamodel).is_equal_to(model)
+
         assert_that(self.logic.datamodel.size()).is_equal_to(1)
+        assert_that(self.logic.datamodel.get_chapters()).is_length(2)
         assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
+
 
 
     def test_generate_previewimage(self):

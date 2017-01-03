@@ -29,6 +29,9 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.pushButtonSave.clicked.connect(self.save_preview_and_status)
 
         self.buttonAddChapter.clicked.connect(self.add_chapter)
+        self.buttonDeleteChapter.clicked.connect(self.delete_chapter)
+        self.buttonUpdateChapter.clicked.connect(self.update_chapter)
+        self.buttonMoveChapter.clicked.connect(self.move_chapter)
 
 
         self.marksListWidget.currentItemChanged.connect(self.listClicked)
@@ -46,6 +49,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.statusChanged)
 
+        self.current_chapter = Chapter(TimeContainer(0), "Default", "")
         #self.ocvcap = cv2.VideoCapture(filename)
         #time.sleep (50.0 / 1000.0);
 
@@ -63,8 +67,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
                 chap = Chapter(TimeContainer(0),"Default", "")
             chap_qti = QtWidgets.QTreeWidgetItem()
             chap_qti.setText(0,str(chap.timestamp))
-            chap_qti.setText(1,chap.title)
             chap_qti.setData(0, QtCore.Qt.UserRole, QtCore.QVariant(chap.timestamp))
+            chap_qti.setText(1,chap.title)
             chap_qti.setData(1, QtCore.Qt.UserRole, QtCore.QVariant(chap))
             self.marksTreeWidget.addTopLevelItem(chap_qti)
             chap_qti.setExpanded(True);
@@ -86,6 +90,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
             it += 1
         self.marksTreeWidget.scrollToItem(current_tree_chapter, QtWidgets.QAbstractItemView.PositionAtTop)
         treechapter.setExpanded(True)
+        self.current_chapter = current_chapter
+
 
             #chap_qti.setExpanded(True);
 
@@ -97,6 +103,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
     def get_videoframehandle(self):
         return self.videoFrame.winId()
 
+
     def add_chapter(self):
         title = self.lineEditChapterTitel.text()
         description = self.textEditChapterDescription.toPlainText()
@@ -104,9 +111,25 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.refresh_chapterview()
 
 
+    def delete_chapter(self):
+        self.logic.delete_chapter(self.current_chapter.timestamp)
+
+
+    def update_chapter(self):
+        chap = self.current_chapter
+        chap.title = self.lineEditChapterTitel.text()
+        chap.description = self.textEditChapterDescription.toPlainText()
+        self.logic.add_chapter(chap)
+
+
+    def move_chapter(self):
+        chap = self.current_chapter
+        chap.timestamp = self.logic.get_current_time()
+        self.logic.add_chapter(chap)
 
     def load_file_action(self):
         self.load_file()
+
 
     def load_file(self, filename=None):
         if filename is None:
@@ -159,10 +182,21 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.logic.jump_to(data)
 
     def treeClicked(self, newitem, previtem):
-        if newitem == None:
+        if newitem is None:
             return
-        data = newitem.data(0, QtCore.Qt.UserRole)
-        self.logic.jump_to(data)
+        timestamp = newitem.data(0, QtCore.Qt.UserRole)
+        if timestamp is None:
+            return
+        self.logic.jump_to(timestamp)
+        self.__refreshChapterView(timestamp)
+
+    def __refreshChapterView(self, timestamp):
+        chapter = self.logic.get_current_chapter(timestamp)
+        if chapter is None:
+            return
+        self.current_chapter = chapter
+        self.lineEditChapterTitel.setText(chapter.title)
+        self.textEditChapterDescription.setPlainText(chapter.description)
 
     def mark(self):
         self.logic.mark_position()
@@ -211,13 +245,12 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.nrOfMarkedFrames.setText(str(len(marks)))
 
     def refresh_chapterview(self):
+        self.listChapters.clear()
         chapters = self.logic.get_chapters()
         for chapter in chapters:
             text = "{} {}".format(str(chapter.timestamp), chapter.title)
             item = QtWidgets.QListWidgetItem(text, self.listChapters)
             item.setData(QtCore.Qt.UserRole, QtCore.QVariant(chapter))
-
-
 
 
     def convert_cv2img_to_qimage(self, cvImg):
