@@ -26,17 +26,16 @@ class ThumbnailerLogic:
 
 
     def load_media(self, mediaurl):
-        self.datamodel.set_media_url(mediaurl)
         self.player.load_media(mediaurl)
 
         metadata = self.fileio.read_yaml(mediaurl)
-        if metadata is None:
-            return
-
         model = self.serializer.deserialize(metadata)
+        model.set_media_url(mediaurl)
+
         for mark in model.get_marks():
             self.__mark_position_at_time(mark)
         self.datamodel = model
+
         self.callback.callback_marks_changed()
 
 
@@ -68,7 +67,7 @@ class ThumbnailerLogic:
         return self.player.get_current_time()
 
     def get_current_chapter(self, timecontainer):
-        return self.datamodel.get_previous_chapter(timecontainer)
+        return self.datamodel.get_chapter_for_timestamp(timecontainer)
 
     def set_current_time(self, timecontainer):
         self.player.set_current_time(timecontainer)

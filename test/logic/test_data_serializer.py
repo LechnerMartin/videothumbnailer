@@ -62,3 +62,12 @@ class DataSerializerTest(unittest.TestCase):
         assert_that(self.model.get_chapters()).is_length(1)
         assert_that(self.model.get_chapters()).is_equal_to(
             [Chapter(TC(0), "Default", "")])
+
+    def test_deserialize_none_object(self):
+        serializer = DataSerializer()
+        self.model = serializer.deserialize(None)
+        assert_that(self.model.size()).is_equal_to(0)
+        assert_that(self.model.get_chapters()).is_length(1)
+        assert_that(self.model.get_chapters()).is_equal_to(
+            [Chapter(TC(0), "Default", "")])
+

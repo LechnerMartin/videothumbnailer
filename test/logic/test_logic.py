@@ -128,20 +128,20 @@ class LogicTest(unittest.TestCase):
         assert_that(self.mock_player.set_current_time.assert_called_once_with(TC(500)))
 
 
-    def test_data_serialisation_export(self):
+    def test_export_data_serialisation(self):
         mediaurl = "/r/a/test.avi"
-        self.logic.load_media(mediaurl)
-        data_string = {"Connected": True}
-        self.mock_dataserial.serialize = Mock(return_value=data_string)
-
+        self.logic.datamodel.set_media_url(mediaurl)
+        self.mock_dataserial.serialize = Mock(return_value={"Serialized": "data"})
         self.logic.export_data()
 
         self.mock_dataserial.serialize.assert_called_once_with(self.logic.datamodel)
-        self.mock_fileio.write_yaml.assert_called_once_with(mediaurl, data_string)
+        self.mock_fileio.write_yaml.assert_called_once_with(mediaurl, {"Serialized": "data"})
 
 
     def test_load_media(self):
         mediaurl = "/root/someuser/test.avi"
+        model = DataModel()
+        self.mock_dataserial.deserialize = Mock(return_value=model)
         self.logic.load_media(mediaurl)
         assert_that(self.logic.get_model().full_media_url).is_equal_to(mediaurl)
 
@@ -150,6 +150,7 @@ class LogicTest(unittest.TestCase):
         self.mock_fileio.read_yaml = Mock(return_value={})
         self.mock_dataserial.deserialize = Mock(return_value=DataModel())
         self.logic.load_media("k")
+        assert_that(self.logic.datamodel.full_media_url).is_equal_to("k")
         #assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
 
     def test_load_meda_including_data_serialisation_import(self):
@@ -195,6 +196,7 @@ class LogicTest(unittest.TestCase):
 #        image2[:] = (0,0,255)
         mediapath = os.getcwd() + "/output/test.avi"
         self.logic.datamodel.add_mark(TC(1), image1)
+        self.mock_dataserial.deserialize = Mock(return_value=self.logic.datamodel)
 
         self.logic.load_media(mediapath)
         img = self.logic.get_preview_image()

@@ -108,6 +108,14 @@ class DataModelTest(unittest.TestCase):
         self.model.add_chapter(Chapter(TC(103),"",""))
         assert_that(self.model.get_previous_chapter(TC(102))).is_equal_to(Chapter(TC(101), "", ""))
 
+
+    def test_get_chapter_for_timestamp(self):
+        self.model.add_chapter(Chapter(TC(101),"a","da"))
+        self.model.add_chapter(Chapter(TC(103),"b","db"))
+        assert_that(self.model.get_chapter_for_timestamp(TC(102))).is_equal_to(Chapter(TC(101), "a", "da"))
+        assert_that(self.model.get_chapter_for_timestamp(TC(103))).is_equal_to(Chapter(TC(103), "b", "db"))
+        assert_that(self.model.get_chapter_for_timestamp(TC(100))).is_equal_to(Chapter(TC(0), "Default", ""))
+
         # same timestamp - what is next /previous?
 
     def test_get_images_are_sorted(self):

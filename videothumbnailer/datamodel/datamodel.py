@@ -50,6 +50,15 @@ class DataModel:
             return self.__chapters[timestamp]
         return None
 
+    def get_chapter_for_timestamp(self, timestamp):
+        keys = list(self.__chapters.keys())
+        keys.sort(reverse=True)
+        for key in keys:
+            if key <= timestamp:
+                return self.__chapters[key]
+        return None
+
+
     def get_previous_chapter(self, timestamp):
         keys = list(self.__chapters.keys())
         keys.sort(reverse=True)

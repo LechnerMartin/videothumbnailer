@@ -22,6 +22,8 @@ class DataSerializer:
 
     def deserialize(self, data):
         model = DataModel()
+        if data is None:
+            return model
 
         model.full_media_url = data.get("Mediaurl", "")
         marks = data.get("Marks", [])
