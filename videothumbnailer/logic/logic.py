@@ -115,7 +115,8 @@ class ThumbnailerLogic:
         return self.datamodel.get_chapters()
 
     def delete_chapter(self, timestamp):
-        pass
+        self.datamodel.delete_chapter(timestamp)
+        self.callback.callback_chapters_changed()
 
 
     def get_preview_image(self):
@@ -140,6 +141,7 @@ class ThumbnailerLogic:
                 img = np.vstack((img, hrow))
 
         return img
+
 
     def export_jpg_image(self):
         img = self.get_preview_image()

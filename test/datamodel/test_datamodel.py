@@ -135,16 +135,43 @@ class DataModelTest(unittest.TestCase):
         self.model.add_chapter(chapter)
         assert_that(self.model.get_chapter(TC(123))).is_equal_to(chapter)
 
+
+    def test_add_chapter_updates_chapter_at_timestamp(self):
+        c = Chapter(TC(1024), "s", "t")
+        cup = Chapter(TC(1024), "k", "v")
+        self.model.add_chapter(c)
+        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c])
+        self.model.add_chapter(cup)
+        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,cup])
+
+
+
+    def test_add_chapter_multiple_times_only_adds_once(self):
+        c1 = Chapter(TC(1024), "s", "t")
+        c2 = Chapter(TC(1024), "s", "t")
+        self.model.add_chapter(c1)
+        self.model.add_chapter(c1)
+        self.model.add_chapter(c2)
+        self.model.add_chapter(c2)
+
+        assert_that(self.model.get_chapters()).is_length(2)
+        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c1])
+
+
+
     def test_get_chapter(self):
         assert_that(self.model.get_chapter(Chapter(None, "", ""))).is_equal_to(None)
 
+
     def test_get_chapters_empty_returns_default_chapter(self):
         assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter])
+
 
     def test_get_chapters(self):
         chapter = Chapter(TC(124), "s", "t")
         self.model.add_chapter(chapter)
         assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,chapter])
+
 
     def test_get_chapters_is_sorted(self):
         c1 = Chapter(TC(1224), "s", "t")
@@ -155,18 +182,12 @@ class DataModelTest(unittest.TestCase):
         self.model.add_chapter(c3)
         assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c2, c3, c1])
 
-    def test_add_chapter_updates_chapter_at_timestamp(self):
-        c = Chapter(TC(1024), "s", "t")
-        cup = Chapter(TC(1024), "k", "v")
-        self.model.add_chapter(c)
-        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,c])
-        self.model.add_chapter(cup)
-        assert_that(self.model.get_chapters()).is_equal_to([self.defaultchapter,cup])
 
     def test_delete_chapter_with_same_timestamp(self):
         self.model.add_chapter(Chapter(TC(123),"", ""))
         self.model.delete_chapter(TC(123))
         assert_that(self.model.get_chapters()).is_length(1)
+
 
     def test_delete_chapter_works_not_if_timestamp_is_different(self):
         self.model.add_chapter(Chapter(TC(123),"", ""))

@@ -88,11 +88,13 @@ class LogicTest(unittest.TestCase):
 
     def test_delete_chapter(self):
         self.logic.add_chapter(Chapter(TC(1234), "title1", "description1"))
+        self.mock_callback.callback_chapters_changed.call_count = 0
+
         self.logic.delete_chapter(TC(1234))
 
         model = self.logic.get_model()
-        assert_that(model.get_chapters()).is_length(2)
-        assert_that(self.mock_callback.callback_chapters_changed.assert_called_once_with())
+        assert_that(model.get_chapters()).is_length(1)
+        assert_that(self.mock_callback.callback_chapters_changed.call_count).is_equal_to(1)
         assert_that(self.mock_player.get_current_time.assert_not_called())
 
 

@@ -108,7 +108,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         title = self.lineEditChapterTitel.text()
         description = self.textEditChapterDescription.toPlainText()
         self.logic.add_chapter(Chapter(None, title, description))
-        self.refresh_chapterview()
+        #self.refresh_chapterview()
 
 
     def delete_chapter(self):
@@ -124,6 +124,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
     def move_chapter(self):
         chap = self.current_chapter
+        self.logic.delete_chapter(chap.timestamp)
         chap.timestamp = self.logic.get_current_time()
         self.logic.add_chapter(chap)
 

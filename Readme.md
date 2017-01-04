@@ -3,12 +3,33 @@
 
 
 # Todo
+Refactor:
+- Get current chapter, remove unnecessary chapter code
+- Test + extract UI Tree logic 
+- Rename Timecontainer to Timestamp
+
+
 ## Next steps
-* x Slider for image
-* x Export Image File (check overwrite?)
-* x Export/reload marks with image
-* x Chek into github
-* x make starter + parse command line
+* Slider for image
+* Export Image File (check overwrite?)
+* Export/reload marks with image
+* Chek into github
+* make starter + parse command line
+* delete/move chapter
+
+- extract Thumbnails per chapter
+- extract Thumbnails / chapter for preview
+- read/write info + thumbnails to disk (Naming?)
+- Export -> Latex? Markdown? Rest(html?) -> Directory? Filename?
+? Split save data + export (Images?)
+- Playlist open (m3u) + select file
+- Playlist add - delete - save
+- Playlist mark yaml
+- set frame x-size or y size
+- set frame x and y size to decide when to break mosaic image in two -> for pagebreak in print
+- extract + save single images (setting?)
+
+
 
 
 * more tests before refactorig
@@ -85,4 +106,27 @@ Make the gui nice....maybe....some time....:)
 - Remove selecte from List?plugins
 - Mark files without yaml file?
 - Mark finished/in progressf Files?
+
+
+
+
+
+
+
+Arbitrary depth of tree? How to handle? (Bedienung?)
+Add version to yaml file? for compatibility checks + loader checks?
+Always a default chapter starting at 0
+Allow update chapter timestamp?
+
+Only append None chapter if no chapter is before mark?
+- Move chapter to first mark?
+
+TC -> Mark
+get chapter for timestamp
+- default chapter?
+- get current chapter
+- get image for chapter
+if chapter same -> keep image
+
+
 

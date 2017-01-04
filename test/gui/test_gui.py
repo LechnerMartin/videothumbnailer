@@ -46,12 +46,12 @@ class GuiTest(unittest.TestCase):
     def test_add_chapter_pressed(self):
         self.form.lineEditChapterTitel.setText("title")
         self.form.textEditChapterDescription.setPlainText("text")
-        self.logic_mock.get_chapters = Mock(return_value=[])
+        #self.logic_mock.get_chapters = Mock(return_value=[])
 
         QtTest.QTest.mouseClick(self.form.buttonAddChapter, QtCore.Qt.LeftButton)
 
         self.logic_mock.add_chapter.assert_called_once_with(Chapter(None, "title", "text"))
-        self.logic_mock.get_chapters.assert_called_once_with()
+        #self.logic_mock.get_chapters.assert_called_once_with()
 
     # Update chapter
     # Delete Chapter (Confirmation?)
