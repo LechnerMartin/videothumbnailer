@@ -161,7 +161,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.statusChanged()
 
     def save_preview_and_status(self):
-        self.logic.export_jpg_image()
+        self.logic.export_jpg_images()
         self.logic.export_data()
 
     def closeEvent(self):
@@ -199,17 +199,22 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.lineEditChapterTitel.setText(chapter.title)
         self.textEditChapterDescription.setPlainText(chapter.description)
 
+        model = self.logic.get_model()
+        cvImg = self.logic.get_preview_image(chapter.timestamp)
+        self.refresh_preview(cvImg, model)
+
+
     def mark(self):
         self.logic.mark_position()
         self.refresh_marks()
 
     def delete_mark(self):
-        item = self.marksListWidget.currentItem()
+        item = self.marksTreeWidget.currentItem()
         if item == None:
             return
-        data = item.data(QtCore.Qt.UserRole)
+        data = item.data(0, QtCore.Qt.UserRole)
         self.logic.delete_mark(data)
-        self.refresh_marks()
+
 
     def clear_marks(self):
         self.logic.clear_marks()
@@ -223,8 +228,9 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.refresh_listview()
         self.refresh_preview(cvImg, model)
 
+
     def refresh_preview(self, cvImg, model):
-        xy = model.get_xy_size()
+        xy = model.get_xy_size(10)
         self.labelImageGeometry.setText("{}x{}".format(xy.x, xy.y))
 
         qimage = self.convert_cv2img_to_qimage(cvImg)

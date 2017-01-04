@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 from videothumbnailer.datamodel.datatypes import Xy, Chapter, TimeContainer as TC
 
@@ -95,16 +96,15 @@ class DataModel:
         self.__marks.clear()
         self.__images.clear()
 
-    def get_xy_size(self, columns = 0):
-        framecount = len(self.__marks)
+    def get_xy_size(self, framecount, columns = 0):
         if columns == 0:
             columns = int(np.ceil(np.sqrt(framecount)))
         rows = 0 if columns == 0 else int(np.ceil(framecount/columns))
         return Xy(columns, rows)
 
-    def get_images(self):
+    def get_images(self, chapter=None):
         result = []
-        for mark in self.__marks:
+        for mark in self.get_marks_for_chapter(chapter):
             img = self.__images[mark]
             if img is not None:
                 result.append(img)

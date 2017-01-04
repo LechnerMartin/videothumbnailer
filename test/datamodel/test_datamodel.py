@@ -130,6 +130,16 @@ class DataModelTest(unittest.TestCase):
         self.model.add_mark(TC(1234), image)
         assert_that(self.model.get_images()).is_equal_to(["img"])
 
+
+    def test_get_images_works_only_within_chapter(self):
+        chapter = Chapter(TC(2),"","")
+        self.model.add_mark(TC(1), "img1")
+        self.model.add_chapter(chapter)
+        self.model.add_mark(TC(5), "img2")
+        self.model.add_mark(TC(7), "img3")
+        assert_that(self.model.get_images(self.defaultchapter)).is_equal_to(["img1"])
+        assert_that(self.model.get_images(chapter)).is_equal_to(["img2", "img3"])
+
     def test_add_chapter(self):
         chapter = Chapter(TC(123), "x", "y")
         self.model.add_chapter(chapter)
@@ -212,24 +222,13 @@ class DataModelTest(unittest.TestCase):
         assert_that(self.model.get_images()).is_equal_to([])
 
     def test_autocalculate_frames_per_row_and_column_from_empty_marks(self):
-        marks = DataModel()
-        assert_that(marks.size()).is_equal_to(0)
-        assert_that(marks.get_xy_size()).is_equal_to(Xy(0, 0))
+        assert_that(self.model.get_xy_size(0)).is_equal_to(Xy(0, 0))
 
     def test_autocalculate_frames_per_row_and_column_from_marks(self):
-        marks = self.__get_filled_marks(10)
-        assert_that(marks.size()).is_equal_to(10)
-        assert_that(marks.get_xy_size()).is_equal_to(Xy(4, 3))
+        assert_that(self.model.get_xy_size(10)).is_equal_to(Xy(4, 3))
 
     def test_calculate_frames_per_row_and_column_with_x_speicfied(self):
-        marks = self.__get_filled_marks(9)
-        assert_that(marks.size()).is_equal_to(9)
-        assert_that(marks.get_xy_size(5)).is_equal_to(Xy(5, 2))
-        assert_that(marks.get_xy_size(1)).is_equal_to(Xy(1, 9))
+        assert_that(self.model.get_xy_size(9, 5)).is_equal_to(Xy(5, 2))
+        assert_that(self.model.get_xy_size(9, 1)).is_equal_to(Xy(1, 9))
 
-    def __get_filled_marks(self, count):
-        marks = DataModel()
-        for i in range(count):
-            marks.add_mark(TC(i), None)
-        return marks
 

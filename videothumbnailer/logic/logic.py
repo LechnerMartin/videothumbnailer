@@ -32,9 +32,9 @@ class ThumbnailerLogic:
         model = self.serializer.deserialize(metadata)
         model.set_media_url(mediaurl)
 
+        self.datamodel = model
         for mark in model.get_marks():
             self.__mark_position_at_time(mark)
-        self.datamodel = model
 
         self.callback.callback_marks_changed()
 
@@ -92,6 +92,7 @@ class ThumbnailerLogic:
 
     def delete_mark(self, timecontainer):
         self.datamodel.delete(timecontainer)
+        self.callback.callback_marks_changed()
 
     def clear_marks(self):
         self.datamodel.clear()
@@ -119,14 +120,16 @@ class ThumbnailerLogic:
         self.callback.callback_chapters_changed()
 
 
-    def get_preview_image(self):
-        images = self.datamodel.get_images()
-        if len(images) < 1:
+    def get_preview_image(self, timestamp = TimeContainer(0)):
+        chapter = self.datamodel.get_chapter_for_timestamp(timestamp)
+        images = self.datamodel.get_images(chapter)
+        imagecount = len(images)
+        if imagecount < 1:
             return None
 
         geometry = np.shape(images[0])
         blank_image = np.zeros(geometry, np.uint8)
-        xy = self.datamodel.get_xy_size()
+        xy = self.datamodel.get_xy_size(imagecount)
         nr_of_matrixcells = xy.x * xy.y
 
         while len(images) < nr_of_matrixcells:
@@ -142,11 +145,15 @@ class ThumbnailerLogic:
 
         return img
 
+    def export_jpg_images(self):
+        for chapter in self.datamodel.get_chapters():
+            timestamp = chapter.timestamp
+            img = self.get_preview_image(timestamp)
+            if img is None:
+                continue
 
-    def export_jpg_image(self):
-        img = self.get_preview_image()
-        filename = self.datamodel.full_media_url + ".jpg"
-        cv2.imwrite(filename, img, [cv2.IMWRITE_JPEG_QUALITY,35])
+            filename = "{}.{}.jpg".format(self.datamodel.full_media_url, timestamp.milliseconds)
+            cv2.imwrite(filename, img, [cv2.IMWRITE_JPEG_QUALITY,35])
 
         #cv2.imwrite(filename, img)
 

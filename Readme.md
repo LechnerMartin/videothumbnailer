@@ -16,10 +16,9 @@ Refactor:
 * Chek into github
 * make starter + parse command line
 * delete/move chapter
-
-- extract Thumbnails per chapter
-- extract Thumbnails / chapter for preview
-- read/write info + thumbnails to disk (Naming?)
+* extract Thumbnails per chapter
+* extract Thumbnails / chapter for preview
+* read/write info + thumbnails to disk (Naming:+ champer ms)
 - Export -> Latex? Markdown? Rest(html?) -> Directory? Filename?
 ? Split save data + export (Images?)
 - Playlist open (m3u) + select file

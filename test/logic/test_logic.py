@@ -1,4 +1,6 @@
 import unittest
+import numpy as np
+
 from unittest.mock import Mock
 
 from assertpy import assert_that
@@ -102,8 +104,12 @@ class LogicTest(unittest.TestCase):
         self.mock_player.get_current_time = Mock(return_value=TC(455))
         self.logic.mark_position()
         marks = self.logic.get_model()
+        self.mock_callback.callback_marks_changed.call_count = 0
+
         self.logic.delete_mark(TC(455))
+
         assert_that(marks.size()).is_equal_to(0)
+        assert_that(self.mock_callback.callback_marks_changed.call_count).is_equal_to(1)
         assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
 
 
@@ -155,12 +161,12 @@ class LogicTest(unittest.TestCase):
         assert_that(self.logic.datamodel.full_media_url).is_equal_to("k")
         #assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
 
-    def test_load_meda_including_data_serialisation_import(self):
+    def test_load_meda_including_data_serialisation_and__screenshots(self):
         mediaurl = "/r/test.avi"
         model = DataModel()
-        model.add_mark(TC(4567), None)
-        model.add_chapter(Chapter(TC(0), "Default", ""))
+        model.add_mark(TC(567), None)
         model.add_chapter(Chapter(TC(1567), "t1", "d1"))
+        self.mock_player.get_screenshot = Mock(return_value="Image")
         self.mock_dataserial.deserialize = Mock(return_value=model)
         self.mock_fileio.read_yaml = Mock(return_value="{file input}")
 
@@ -168,27 +174,49 @@ class LogicTest(unittest.TestCase):
 
         self.mock_fileio.read_yaml.assert_called_once_with(mediaurl)
         self.mock_dataserial.deserialize.assert_called_once_with("{file input}")
-        self.mock_player.get_screenshot.assert_called_once_with(TC(4567))
+        self.mock_player.get_screenshot.assert_called_once_with(TC(567))
         assert_that(self.logic.datamodel).is_equal_to(model)
-
         assert_that(self.logic.datamodel.size()).is_equal_to(1)
         assert_that(self.logic.datamodel.get_chapters()).is_length(2)
+        assert_that(self.logic.datamodel.get_images()).is_equal_to(["Image"])
         assert_that(self.mock_callback.callback_marks_changed.assert_called_once_with())
 
 
-
-    def test_generate_previewimage(self):
-        import numpy as np
+    def test_get_previewimage_for_single_mark(self):
         image = np.ones((20,20,3), np.uint8)
         self.logic.datamodel.add_mark(TC(1), image)
 
         img = self.logic.get_preview_image()
 
-        assert_that(img.size).is_equal_to(20*20*3)
+        assert_that(img.shape).is_equal_to((20,20,3))
         assert_that(img.all()).is_equal_to(image.all())
 
+    def test_get_previewimage_for_3_marks_is_2x2_collage(self):
+        xsize=10; ysize=20
+        image = np.ones((ysize,xsize,3), np.uint8)
+        self.logic.datamodel.add_mark(TC(1), image)
+        self.logic.datamodel.add_mark(TC(2), image)
+        self.logic.datamodel.add_mark(TC(3), image)
+
+        img = self.logic.get_preview_image()
+
+        assert_that(img.shape).is_equal_to((2*ysize, 2*xsize,3))
+
+    def test_get_previewimage_works_only_inside_chapter(self):
+        image1 = np.ones((5,5,3), np.uint8)
+        image2 = np.zeros((5,5,3), np.uint8)
+        self.logic.datamodel.add_mark(TC(10), image1)
+        self.logic.datamodel.add_chapter(Chapter(TC(2000), "", ""))
+        self.logic.datamodel.add_mark(TC(4000), image2)
+
+        img = self.logic.get_preview_image(TC(3000))
+
+        assert_that(img.shape).is_equal_to((5, 5, 3))
+        #assert_that(img.all()).is_equal_to(image1.all())
+        assert_that(img.all()).is_equal_to(image2.all())
+
+
     def test_export_image(self):
-        import numpy as np
         import cv2
         import os
 
@@ -204,7 +232,7 @@ class LogicTest(unittest.TestCase):
         img = self.logic.get_preview_image()
         assert_that(img.size).is_greater_than(10)
 
-        self.logic.export_jpg_image()
+        self.logic.export_jpg_images()
 
         image = cv2.imread(mediapath +".jpg")
         assert_that(image).is_not_none()
