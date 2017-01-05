@@ -1,5 +1,14 @@
 import cv2
 import numpy as np
+from io import BytesIO
+
+from PIL import Image as PILImage
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.units import inch, mm, cm
+#from reportlab.lib.utils import ImageReader
+#from reportlab.pdfgen.pdfimages import PDFImage
+
 
 from videothumbnailer.datamodel.datamodel import DataModel
 from videothumbnailer.io.fileio import FileIo
@@ -129,6 +138,7 @@ class ThumbnailerLogic:
 
         geometry = np.shape(images[0])
         blank_image = np.zeros(geometry, np.uint8)
+        blank_image[:,:,:] = 255
         xy = self.datamodel.get_xy_size(imagecount)
         nr_of_matrixcells = xy.x * xy.y
 
@@ -146,13 +156,15 @@ class ThumbnailerLogic:
         return img
 
     def export_jpg_images(self):
+        basefilename = self.datamodel.full_media_url
+
         for chapter in self.datamodel.get_chapters():
             timestamp = chapter.timestamp
             img = self.get_preview_image(timestamp)
             if img is None:
                 continue
 
-            filename = "{}.{}.jpg".format(self.datamodel.full_media_url, timestamp.milliseconds)
+            filename = "{}.{}.jpg".format(basefilename, timestamp.milliseconds)
             cv2.imwrite(filename, img, [cv2.IMWRITE_JPEG_QUALITY,35])
 
         #cv2.imwrite(filename, img)
@@ -168,4 +180,36 @@ class ThumbnailerLogic:
         # for i in range(2):
         #    img = np.vstack((img, img))
         # return img
+
+    def export_pdf(self):
+        filename = self.datamodel.full_media_url + ".pdf"
+        pdf = SimpleDocTemplate(filename)
+        pdfcontent = []
+        styles = getSampleStyleSheet()
+        pdfcontent.append(Paragraph(self.get_mediatitle(), styles["Title"]))
+
+        for chapter in self.datamodel.get_chapters():
+            self.__add_chapter_to_pdf(chapter, pdfcontent)
+            pdfcontent.append(Spacer(1, 12))
+        pdf.build(pdfcontent)
+
+    def __add_chapter_to_pdf(self, chapter, pdfcontent):
+        timestamp = chapter.timestamp
+        styles = getSampleStyleSheet()
+        title = "{}\t{}".format(chapter.title, timestamp)
+        pdfcontent.append(Paragraph(title, styles["Heading2"]))
+        pdfcontent.append(Paragraph(chapter.description, styles["Normal"]))
+        img = self.get_preview_image(timestamp)
+        if img is not None:
+            img1 = self.create_pdf_image(img)
+            pdfcontent.append(Image(img1, width=18*cm,height=25*cm,kind='proportional'))
+
+    def create_pdf_image(self, img):
+        file = BytesIO()
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        image = PILImage.fromarray(img)
+        image.save(file, 'jpeg')
+        file.name = 'test.jpg'
+        file.seek(0)
+        return file
 

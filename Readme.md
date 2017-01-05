@@ -7,6 +7,7 @@ Refactor:
 - Get current chapter, remove unnecessary chapter code
 - Test + extract UI Tree logic 
 - Rename Timecontainer to Timestamp
+- Move Pdf export to the GUI part? -> playlist
 
 
 ## Next steps
@@ -19,15 +20,20 @@ Refactor:
 * extract Thumbnails per chapter
 * extract Thumbnails / chapter for preview
 * read/write info + thumbnails to disk (Naming:+ champer ms)
-- Export -> Latex? Markdown? Rest(html?) -> Directory? Filename?
+* make empty image white for better printing
+* create pdf -> Python reportlabs
+- add table of contents to pdf
+- Set Beginn time at end or smaller or..
+- Fix pagesize for content ( margins)
 ? Split save data + export (Images?)
 - Playlist open (m3u) + select file
 - Playlist add - delete - save
-- Playlist mark yaml
 - set frame x-size or y size
 - set frame x and y size to decide when to break mosaic image in two -> for pagebreak in print
 - extract + save single images (setting?)
-
+- add option to delete all already generated thumbs on disk?
+- Playlist mark yaml
+- Export -> Latex? Markdown? Rest(html?) -> Directory? Filename?
 
 
 

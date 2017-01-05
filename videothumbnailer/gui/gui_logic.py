@@ -163,6 +163,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
     def save_preview_and_status(self):
         self.logic.export_jpg_images()
         self.logic.export_data()
+        self.logic.export_pdf()
+
 
     def closeEvent(self):
         self.logic.export_data()
