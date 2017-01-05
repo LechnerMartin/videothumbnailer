@@ -23,14 +23,18 @@ Refactor:
 * make empty image white for better printing
 * create pdf -> Python reportlabs
 * Keep formatting (newlines)
+* Quick tasten
 
-- Quick tasten
-- Save + Ctrl S
+- Play taste Space auch wenn im Treewidget
+- Save + Ctrl S (including chapter? yaml only?)
 - Auto update chapter?
+
 
 - Playlist open (m3u) + select file
 - Export whole playlist
 - Settings: Export -> imgs/row
+
+- Format img =  Linken Rand Heftbar/Locher fähig 
 
 - Playlist add - delete - save
 - Hide chapter, chapter order (Techniken in Langem Video sinnvoll gruppieren?
@@ -54,7 +58,8 @@ Refactor:
 - Export format chooser  
 - save settings with playlist ?
 - Special chapters with arbittrary marks? -> Overlapping with ohters for Overwievs, etc
-
+- CTL-Z ....
+- Chpater Reload? (clck reicht...)
 
 
 
