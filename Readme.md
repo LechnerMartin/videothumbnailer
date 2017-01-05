@@ -22,18 +22,39 @@ Refactor:
 * read/write info + thumbnails to disk (Naming:+ champer ms)
 * make empty image white for better printing
 * create pdf -> Python reportlabs
+* Keep formatting (newlines)
+
+- Quick tasten
+- Save + Ctrl S
+- Auto update chapter?
+
+- Playlist open (m3u) + select file
+- Export whole playlist
+- Settings: Export -> imgs/row
+
+- Playlist add - delete - save
+- Hide chapter, chapter order (Techniken in Langem Video sinnvoll gruppieren?
 - add table of contents to pdf
 - Set Beginn time at end or smaller or..
 - Fix pagesize for content ( margins)
 ? Split save data + export (Images?)
-- Playlist open (m3u) + select file
-- Playlist add - delete - save
 - set frame x-size or y size
 - set frame x and y size to decide when to break mosaic image in two -> for pagebreak in print
 - extract + save single images (setting?)
 - add option to delete all already generated thumbs on disk?
 - Playlist mark yaml
 - Export -> Latex? Markdown? Rest(html?) -> Directory? Filename?
+- Render asciidoc/markdown/... to pdf? (Doc2html?)
+- Warning if updated info in Chapter when moving (dont discards automatically -> create Chapter from Dialog? Store Timestamp in dialog?)
+- Settings
+    - Quick tasten Verzögerung
+    - Export
+	- Include TOC flag?
+	- Max imgs/row
+- Export format chooser  
+- save settings with playlist ?
+- Special chapters with arbittrary marks? -> Overlapping with ohters for Overwievs, etc
+
 
 
 

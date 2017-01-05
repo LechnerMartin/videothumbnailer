@@ -197,8 +197,9 @@ class ThumbnailerLogic:
         timestamp = chapter.timestamp
         styles = getSampleStyleSheet()
         title = "{}\t{}".format(chapter.title, timestamp)
+        description = chapter.description.replace('\n','<br />\n')
         pdfcontent.append(Paragraph(title, styles["Heading2"]))
-        pdfcontent.append(Paragraph(chapter.description, styles["Normal"]))
+        pdfcontent.append(Paragraph(description, styles["Normal"]))
         img = self.get_preview_image(timestamp)
         if img is not None:
             img1 = self.create_pdf_image(img)
