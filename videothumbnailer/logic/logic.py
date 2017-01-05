@@ -194,10 +194,14 @@ class ThumbnailerLogic:
         pdf.build(pdfcontent)
 
     def __add_chapter_to_pdf(self, chapter, pdfcontent):
+        import markdown2
+
         timestamp = chapter.timestamp
         styles = getSampleStyleSheet()
         title = "{}\t{}".format(chapter.title, timestamp)
-        description = chapter.description.replace('\n','<br />\n')
+        #description = chapter.description.replace('\n','<br />\n')
+        description = markdown2.markdown(chapter.description)
+        description = description.replace('\n','<br />\n')
         pdfcontent.append(Paragraph(title, styles["Heading2"]))
         pdfcontent.append(Paragraph(description, styles["Normal"]))
         img = self.get_preview_image(timestamp)

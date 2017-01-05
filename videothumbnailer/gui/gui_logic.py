@@ -33,6 +33,13 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.buttonUpdateChapter.clicked.connect(self.update_chapter)
         self.buttonMoveChapter.clicked.connect(self.move_chapter)
 
+        self.buttonSkipForwardLarge.clicked.connect(self.skip_forward_large)
+        self.buttonSkipForwardSmall.clicked.connect(self.skip_forward_small)
+        self.buttonSkipBackwardLarge.clicked.connect(self.skip_backward_large)
+        self.buttonSkipBackwardSmall.clicked.connect(self.skip_backward_small)
+        self.largeskip = 15000
+        self.smallskip = 5000
+
 
         self.marksListWidget.currentItemChanged.connect(self.listClicked)
 #       self.connect(self.listWidget, QtCore.SIGNAL("currentItemChanged (QListWidgetItem*,QListWidgetItem*)"), self.listClicked)
@@ -164,6 +171,24 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.logic.export_jpg_images()
         self.logic.export_data()
         self.logic.export_pdf()
+
+    def skip_forward_large(self):
+        millisecods = self.sliderVideoPosition.sliderPosition()
+        self.logic.set_current_time(TimeContainer(millisecods + self.largeskip))
+
+    def skip_forward_small(self):
+        millisecods = self.sliderVideoPosition.sliderPosition()
+        self.logic.set_current_time(TimeContainer(millisecods + self.smallskip))
+
+    def skip_backward_large(self):
+        millisecods = self.sliderVideoPosition.sliderPosition()
+        self.logic.set_current_time(TimeContainer(millisecods - self.largeskip))
+
+    def skip_backward_small(self):
+        millisecods = self.sliderVideoPosition.sliderPosition()
+        self.logic.set_current_time(TimeContainer(millisecods - self.smallskip))
+
+
 
 
     def closeEvent(self):
