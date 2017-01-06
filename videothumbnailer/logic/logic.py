@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from io import BytesIO
 
+import markdown2
 from PIL import Image as PILImage
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
@@ -183,23 +184,25 @@ class ThumbnailerLogic:
 
     def export_pdf(self):
         filename = self.datamodel.full_media_url + ".pdf"
-        pdf = SimpleDocTemplate(filename)
+        pdf = SimpleDocTemplate(filename, leftMargin=1.5*cm, rightMargin=1.5*cm, topMargin=1.5*cm, bottomMargin=1.5*cm)
         pdfcontent = []
         styles = getSampleStyleSheet()
         pdfcontent.append(Paragraph(self.get_mediatitle(), styles["Title"]))
 
         for chapter in self.datamodel.get_chapters():
-            self.__add_chapter_to_pdf(chapter, pdfcontent)
+            self.__add_chapter_to_pdf(chapter, pdfcontent, pdf)
             pdfcontent.append(Spacer(1, 12))
         pdf.build(pdfcontent)
 
-    def __add_chapter_to_pdf(self, chapter, pdfcontent):
-        import markdown2
+
+    def __add_chapter_to_pdf(self, chapter, pdfcontent, pdf):
+        maxwidth = pdf.width
+        maxheight = pdf.height
 
         timestamp = chapter.timestamp
         styles = getSampleStyleSheet()
         title = "{}\t{}".format(chapter.title, timestamp)
-        #description = chapter.description.replace('\n','<br />\n')
+        #description = chapter.description.replace('\n\n','<br />\n')
         description = markdown2.markdown(chapter.description)
         description = description.replace('\n','<br />\n')
         pdfcontent.append(Paragraph(title, styles["Heading2"]))
@@ -207,7 +210,8 @@ class ThumbnailerLogic:
         img = self.get_preview_image(timestamp)
         if img is not None:
             img1 = self.create_pdf_image(img)
-            pdfcontent.append(Image(img1, width=18*cm,height=25*cm,kind='proportional'))
+            pdfcontent.append(Image(img1, width=maxwidth, height=maxheight,kind='proportional'))
+
 
     def create_pdf_image(self, img):
         file = BytesIO()

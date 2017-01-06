@@ -224,6 +224,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         if chapter is None:
             return
         chap = self.__get_chapter_from_chapterview(self.current_chapter.timestamp)
+
         if chap != self.current_chapter:
             self.logic.add_chapter(chap)
         self.current_chapter = chapter
