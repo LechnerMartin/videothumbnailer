@@ -99,12 +99,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
         treechapter.setExpanded(True)
         self.current_chapter = current_chapter
         #chap_qti.setExpanded(True);
-        model = self.logic.get_model()
-        cvImg = self.logic.get_preview_image(current_time)
-        self.nrOfMarkedFrames.setText(str(model.size()))
-        self.refresh_preview(cvImg, model)
-
-
+        self.nrOfMarkedFrames.setText(str(self.logic.get_model().size()))
+        self.__refresh_preview(current_time)
 
 
     def callback_chapters_changed(self):
@@ -116,10 +112,8 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
 
     def add_chapter(self):
-        title = self.lineEditChapterTitel.text()
-        description = self.textEditChapterDescription.toPlainText()
-        self.logic.add_chapter(Chapter(None, title, description))
-        #self.refresh_chapterview()
+        chapter = self.__get_chapter_from_chapterview(None)
+        self.logic.add_chapter(chapter)
 
 
     def delete_chapter(self):
@@ -127,9 +121,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
 
     def update_chapter(self):
-        chap = self.current_chapter
-        chap.title = self.lineEditChapterTitel.text()
-        chap.description = self.textEditChapterDescription.toPlainText()
+        chap = self.__get_chapter_from_chapterview(self.current_chapter.timestamp)
         self.logic.add_chapter(chap)
 
 
@@ -219,13 +211,22 @@ class VideoThumbnailerGui(Ui_MainWindow):
         chapter = self.logic.get_current_chapter(timestamp)
         if chapter is None:
             return
+        chap = self.__get_chapter_from_chapterview(self.current_chapter.timestamp)
+        if chap != self.current_chapter:
+            self.logic.add_chapter(chap)
         self.current_chapter = chapter
+        self.__set_chapterview_from_chapter(chapter)
+        self.__refresh_preview(chapter.timestamp)
+
+    def __set_chapterview_from_chapter(self, chapter):
         self.lineEditChapterTitel.setText(chapter.title)
         self.textEditChapterDescription.setPlainText(chapter.description)
 
-        model = self.logic.get_model()
-        cvImg = self.logic.get_preview_image(chapter.timestamp)
-        self.refresh_preview(cvImg, model)
+    def __get_chapter_from_chapterview(self, timestamp):
+        title = self.lineEditChapterTitel.text()
+        description = self.textEditChapterDescription.toPlainText()
+        return Chapter(timestamp, title, description)
+
 
 
     def mark(self):
@@ -243,7 +244,11 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.logic.clear_marks()
 
 
-    def refresh_preview(self, cvImg, model):
+    def __refresh_preview(self, timestamp):
+        model = self.logic.get_model()
+        cvImg = self.logic.get_preview_image(timestamp)
+
+        self.nrOfMarkedFrames.setText(str(model.size()))
         xy = model.get_xy_size(10)
         self.labelImageGeometry.setText("{}x{}".format(xy.x, xy.y))
 
