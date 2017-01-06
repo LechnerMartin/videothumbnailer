@@ -15,6 +15,10 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
         self.timer = QtCore.QTimer()
 
+        #self.centralwidget = QtWidgets.QWidget(MainWindow)
+        QtWidgets.QShortcut(QtGui.QKeySequence("Ctr+S"), window, self.save_file_action)
+        QtWidgets.QShortcut(QtGui.QKeySequence("F4"), window, self.toggle_play_pause)
+
         # make connections
         self.pushButtonTest.clicked.connect(self.statusChanged)
 
@@ -52,11 +56,13 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
         self.actionFileOpen.triggered.connect(self.load_file_action)
         self.actionOpen.triggered.connect(self.load_file_action)
+        self.actionFileSave.triggered.connect(self.save_file_action)
 
         self.timer.setInterval(100)
         self.timer.timeout.connect(self.statusChanged)
 
         self.current_chapter = Chapter(TimeContainer(0), "Default", "")
+
         #self.ocvcap = cv2.VideoCapture(filename)
         #time.sleep (50.0 / 1000.0);
 
@@ -131,8 +137,15 @@ class VideoThumbnailerGui(Ui_MainWindow):
         chap.timestamp = self.logic.get_current_time()
         self.logic.add_chapter(chap)
 
+
     def load_file_action(self):
         self.load_file()
+
+
+    def save_file_action(self):
+        time = QtCore.QDateTime.currentDateTime().toString()
+        self.savetimeLbl.setText(time)
+        self.logic.export_data()
 
 
     def load_file(self, filename=None):
@@ -163,7 +176,6 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
     def save_preview_and_status(self):
         self.logic.export_jpg_images()
-        self.logic.export_data()
         self.logic.export_pdf()
 
     def skip_forward_large(self):

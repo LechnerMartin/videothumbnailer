@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1438</width>
-    <height>924</height>
+    <height>974</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>390</x>
-      <y>440</y>
+      <y>490</y>
       <width>99</width>
       <height>24</height>
      </rect>
@@ -31,7 +31,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>480</y>
+      <y>530</y>
       <width>531</width>
       <height>371</height>
      </rect>
@@ -83,9 +83,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
-      <width>441</width>
-      <height>271</height>
+      <y>50</y>
+      <width>481</width>
+      <height>311</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -99,7 +99,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>390</y>
+      <y>440</y>
       <width>621</width>
       <height>36</height>
      </rect>
@@ -193,6 +193,9 @@
       <height>24</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DejaVu Sans&quot;;</string>
+    </property>
     <property name="text">
      <string>Video name</string>
     </property>
@@ -214,7 +217,7 @@
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>440</y>
+      <y>490</y>
       <width>171</width>
       <height>24</height>
      </rect>
@@ -246,17 +249,17 @@
      </rect>
     </property>
     <property name="text">
-     <string>Save</string>
+     <string>Export</string>
     </property>
     <property name="shortcut">
-     <string>Ctrl+S</string>
+     <string>Backspace</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>330</y>
+      <y>310</y>
       <width>91</width>
       <height>24</height>
      </rect>
@@ -268,8 +271,8 @@
    <widget class="QLabel" name="labelImageGeometry">
     <property name="geometry">
      <rect>
-      <x>710</x>
-      <y>330</y>
+      <x>720</x>
+      <y>310</y>
       <width>99</width>
       <height>24</height>
      </rect>
@@ -295,8 +298,8 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>320</y>
-      <width>451</width>
+      <y>370</y>
+      <width>491</width>
       <height>22</height>
      </rect>
     </property>
@@ -308,7 +311,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>430</y>
+      <y>480</y>
       <width>211</width>
       <height>36</height>
      </rect>
@@ -337,8 +340,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
-      <width>431</width>
+      <y>400</y>
+      <width>481</width>
       <height>26</height>
      </rect>
     </property>
@@ -477,6 +480,38 @@
      <string>Move</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>101</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 8pt &quot;DejaVu Sans&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Last saved:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="savetimeLbl">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>30</y>
+      <width>231</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 8pt &quot;DejaVu Sans&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Not yet</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -492,6 +527,7 @@
      <string>File</string>
     </property>
     <addaction name="actionFileOpen"/>
+    <addaction name="actionFileSave"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -525,6 +561,14 @@
   <action name="actionFileOpen">
    <property name="text">
     <string>Open</string>
+   </property>
+  </action>
+  <action name="actionFileSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
  </widget>
