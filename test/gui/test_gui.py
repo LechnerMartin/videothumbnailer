@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import Mock
 
+import numpy as np
 from assertpy import assert_that
 
 
@@ -69,8 +70,11 @@ class GuiTest(unittest.TestCase):
 
 
     def test_callback_marks_changed(self):
+        image = np.ones((20,20,3), np.uint8)
+        self.logic_mock.get_preview_image = Mock(return_value=image)
         self.logic_mock.get_chapters = Mock(return_value=[None])
         self.logic_mock.get_marks_for_chapter = Mock(return_value=[TC(300)])
+
         self.form.callback_marks_changed()
 
         assert_that(self.form.marksTreeWidget.topLevelItemCount()).is_equal_to(1)

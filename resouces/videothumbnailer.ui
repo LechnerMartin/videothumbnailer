@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1599</width>
+    <width>1438</width>
     <height>924</height>
    </rect>
   </property>
@@ -200,24 +200,14 @@
    <widget class="QPushButton" name="pushButtonTest">
     <property name="geometry">
      <rect>
-      <x>1110</x>
-      <y>40</y>
+      <x>1150</x>
+      <y>60</y>
       <width>125</width>
       <height>34</height>
      </rect>
     </property>
     <property name="text">
      <string>Test mis</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="marksListWidget">
-    <property name="geometry">
-     <rect>
-      <x>1360</x>
-      <y>170</y>
-      <width>221</width>
-      <height>241</height>
-     </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label">
@@ -236,8 +226,8 @@
    <widget class="QLabel" name="labelDebugInfo">
     <property name="geometry">
      <rect>
-      <x>1110</x>
-      <y>10</y>
+      <x>1140</x>
+      <y>190</y>
       <width>441</width>
       <height>21</height>
      </rect>
@@ -493,7 +483,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1599</width>
+     <width>1438</width>
      <height>29</height>
     </rect>
    </property>

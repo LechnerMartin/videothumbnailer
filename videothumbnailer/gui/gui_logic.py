@@ -41,7 +41,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.smallskip = 5000
 
 
-        self.marksListWidget.currentItemChanged.connect(self.listClicked)
+#        self.marksListWidget.currentItemChanged.connect(self.listClicked)
 #       self.connect(self.listWidget, QtCore.SIGNAL("currentItemChanged (QListWidgetItem*,QListWidgetItem*)"), self.listClicked)
 
         self.marksTreeWidget.currentItemChanged.connect(self.treeClicked)
@@ -98,9 +98,13 @@ class VideoThumbnailerGui(Ui_MainWindow):
         self.marksTreeWidget.scrollToItem(current_tree_chapter, QtWidgets.QAbstractItemView.PositionAtTop)
         treechapter.setExpanded(True)
         self.current_chapter = current_chapter
+        #chap_qti.setExpanded(True);
+        model = self.logic.get_model()
+        cvImg = self.logic.get_preview_image(current_time)
+        self.nrOfMarkedFrames.setText(str(model.size()))
+        self.refresh_preview(cvImg, model)
 
 
-            #chap_qti.setExpanded(True);
 
 
     def callback_chapters_changed(self):
@@ -158,9 +162,7 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
         self.logic.load_media(filename)
         self.new_video_loaded()
-
         self.statusChanged()
-        self.refresh_marks()
         self.timer.start()
 
     def toggle_play_pause(self):
@@ -203,11 +205,6 @@ class VideoThumbnailerGui(Ui_MainWindow):
         millisecods = self.sliderVideoPosition.sliderPosition()
         self.display_current_videotime(TimeContainer(millisecods))
 
-    def listClicked(self, newitem, previtem):
-        if newitem == None:
-            return
-        data = newitem.data(QtCore.Qt.UserRole)
-        self.logic.jump_to(data)
 
     def treeClicked(self, newitem, previtem):
         if newitem is None:
@@ -233,7 +230,6 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
     def mark(self):
         self.logic.mark_position()
-        self.refresh_marks()
 
     def delete_mark(self):
         item = self.marksTreeWidget.currentItem()
@@ -245,15 +241,6 @@ class VideoThumbnailerGui(Ui_MainWindow):
 
     def clear_marks(self):
         self.logic.clear_marks()
-        self.refresh_marks()
-
-
-    def refresh_marks(self):
-        model = self.logic.get_model()
-        cvImg = self.logic.get_preview_image()
-
-        self.refresh_listview()
-        self.refresh_preview(cvImg, model)
 
 
     def refresh_preview(self, cvImg, model):
@@ -268,15 +255,6 @@ class VideoThumbnailerGui(Ui_MainWindow):
         pixmap = QtGui.QPixmap(qimage)
         pixmap = pixmap.scaled(preview_area.width(), preview_area.height())
         return pixmap
-
-    def refresh_listview(self):
-        self.marksListWidget.clear()
-        marks = self.logic.get_marks()
-        for mark in marks:
-            text = "{} ({})".format(str(mark), mark.milliseconds)
-            item = QtWidgets.QListWidgetItem(text, self.marksListWidget)
-            item.setData(QtCore.Qt.UserRole, QtCore.QVariant(mark))
-        self.nrOfMarkedFrames.setText(str(len(marks)))
 
     def refresh_chapterview(self):
         self.listChapters.clear()
